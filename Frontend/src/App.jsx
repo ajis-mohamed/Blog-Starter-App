@@ -1,0 +1,60 @@
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import Home from './components/Home';
+import Login from './components/Login';
+import Signup from './components/Signup';
+import auth from './config/configFirebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useEffect, createContext, useState } from 'react';
+
+export const AuthContext = createContext();
+
+function App() {
+  const [user, setUser] = useState(false);
+  const [role, setRole] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(true);
+      } else {
+        setUser(false);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen grid place-items-center bg-[#FBF9F5] text-[#2C2C2A]">
+        <p className="font-serif text-lg">Loading...</p>
+      </div>
+    );
+  }
+
+  return (
+    <AuthContext.Provider value={{ user, setUser, role, setRole }}>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={user ? <Home /> : <Navigate to="/login" replace />}
+          />
+          <Route
+            path="/login"
+            element={!user ? <Login /> : <Navigate to="/" replace />}
+          />
+          <Route
+            path="/signup"
+            element={!user ? <Signup /> : <Navigate to="/" replace />}
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthContext.Provider>
+  );
+}
+
+export default App;
