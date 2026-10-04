@@ -7,6 +7,7 @@ import { AuthContext } from '../App'
 function Home() {
     const { user, setUser } = useContext(AuthContext);
 
+    const URL = 'https://blog-starter-app-717g.onrender.com/'
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
     const [posts, setPosts] = useState([])
@@ -18,7 +19,7 @@ function Home() {
     useEffect(() => {
         async function fetchPosts() {
             try {
-                const response = await axios.get('http://localhost:5000/posts');
+                const response = await axios.get(`${URL}posts`);
                 setPosts(response.data);
             } catch (error) {
                 console.error('Error fetching posts:', error);
@@ -33,7 +34,7 @@ function Home() {
         if (!title.trim() || !content.trim()) return;
 
         try {
-            await axios.post('http://localhost:5000/posts', {
+            await axios.post(`${URL}posts`, {
                 id: posts.length + 1,
                 title: title.trim(),
                 content: content.trim()
@@ -43,7 +44,7 @@ function Home() {
             setContent('');
 
             // Re-fetch posts so the new story shows up immediately
-            const response = await axios.get('http://localhost:5000/posts');
+            const response = await axios.get(`${URL}posts`);
             setPosts(response.data.reverse()); // Reverse the order to show the newest post first   
 
         } catch (error) {
@@ -54,7 +55,7 @@ function Home() {
     async function handleLike(id) {
         console.log(`Liked post with id: ${id}`);
         try {
-            const response = await axios.patch(`http://localhost:5000/like/${id}`);
+            const response = await axios.patch(`${URL}like/${id}`);
 
             if (response.status === 200) {
                 setPosts((prevPosts) =>

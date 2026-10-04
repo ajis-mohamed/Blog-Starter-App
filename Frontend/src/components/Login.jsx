@@ -12,9 +12,10 @@ export default function Login() {
 
     const [loading, setLoading] = useState(false);
 
-   const { setRole } = useContext(AuthContext);
+    const { setRole } = useContext(AuthContext);
 
     const navigate = useNavigate();
+    const URL = 'https://blog-starter-app-717g.onrender.com/'
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -23,9 +24,9 @@ export default function Login() {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const uid = userCredential.user.uid;
 
-            const response = await axios.get(`http://localhost:5000/users?uid=${uid}`);
+            const response = await axios.get(`${URL}users?uid=${uid}`);
             const userData = response.data;
-            setRole(userData); 
+            setRole(userData);
             navigate('/');
         } catch (error) {
             console.error('Error logging in:', error.message);

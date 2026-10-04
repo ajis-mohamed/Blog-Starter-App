@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import auth from '../config/configFirebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signOut } from 'firebase/auth';
 import { AuthContext } from '../App';
 import axios from 'axios';
 
@@ -10,6 +10,7 @@ export default function Signup() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    const URL = 'https://blog-starter-app-717g.onrender.com/'
     const { role, setRole } = useContext(AuthContext);
 
     const [loading, setLoading] = useState(false);
@@ -24,13 +25,14 @@ export default function Signup() {
             const firebaseUser = userCredential.user;
             console.log('Firebase User created successfully:', firebaseUser.uid);
 
-            const response = await axios.post('http://localhost:5000/users', {
+            const response = await axios.post(`${URL}users`, {
                 name: name,
                 email: email,
                 role: role,
                 uid: firebaseUser.uid
             });
             console.log('User saved to MongoDB successfully:', response.data);
+            
             navigate('/login');
 
         } catch (error) {
